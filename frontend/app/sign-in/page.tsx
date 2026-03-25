@@ -66,8 +66,6 @@ export default function SignIn() {
 
             if (!res.ok) {
                 console.error("Failed to fetch schools:", res.status);
-                setLoading(false);
-                setError(res.statusText);
                 return;
             }
 
@@ -76,8 +74,6 @@ export default function SignIn() {
             setSchools(orgs);
         } catch (error) {
             console.error("Error fetching schools:", error);
-            setLoading(false);
-            setError("Unknown error");
             return;
         }
     }

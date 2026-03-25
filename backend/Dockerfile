@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt flask
 RUN playwright install chromium
 RUN playwright install-deps chromium
 
-CMD ["python", "-m", "flask", "--app", "main", "run", "--host", "0.0.0.0", "--port", "5000", "--debug"]
+CMD ["python", "-m", "flask", "--app", "app", "run", "--host", "0.0.0.0", "--port", "5000", "--debug"]
