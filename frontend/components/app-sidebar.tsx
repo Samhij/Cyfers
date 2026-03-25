@@ -23,7 +23,9 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "./ui/sidebar";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { isAscii } from "buffer";
+import Link from "next/link";
 
 const items = [
     { title: "Home", url: "#", icon: Home },
@@ -35,6 +37,7 @@ const items = [
 
 export default function AppSidebar() {
     const router = useRouter();
+    const pathname = usePathname();
 
     async function handleSignOut() {
         const res = await fetch("/api/logout", {
@@ -74,24 +77,43 @@ export default function AppSidebar() {
                 <SidebarGroup>
                     <SidebarMenu>
                         {[
-                            { title: "Home", icon: LayoutGrid },
-                            { title: "Cijfers", icon: Star },
-                            { title: "Rooster", icon: Calendar },
+                            {
+                                title: "Home",
+                                url: "/home",
+                                icon: LayoutGrid,
+                                isActive: pathname === "/home",
+                            },
+                            {
+                                title: "Cijfers",
+                                url: "/cijfers",
+                                icon: Star,
+                                isActive: pathname === "/cijfers",
+                            },
+                            {
+                                title: "Rooster",
+                                url: "/rooster",
+                                icon: Calendar,
+                                isActive: pathname === "/rooster",
+                            },
                             {
                                 title: "Verzuim",
+                                url: "/verzuim",
                                 icon: CalendarX,
-                                isActive: true,
+                                isActive: pathname === "/verzuim",
                             },
                         ].map((item) => (
                             <SidebarMenuItem key={item.title}>
                                 <SidebarMenuButton
                                     isActive={item.isActive}
-                                    className="py-6 transition-all hover:bg-sidebar-accent"
+                                    className="py-6 transition-all hover:bg-sidebar-accent data-active:rounded-l-sm data-active:text-primary data-active:hover:text-primary data-active:border-l-4 border-primary"
+                                    asChild
                                 >
-                                    <item.icon className="size-5" />
-                                    <span className="text-base">
-                                        {item.title}
-                                    </span>
+                                    <Link href={item.url}>
+                                        <item.icon className="size-5" />
+                                        <span className="text-base">
+                                            {item.title}
+                                        </span>
+                                    </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                         ))}

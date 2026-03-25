@@ -1,5 +1,10 @@
 import AppSidebar from "@/components/app-sidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Cyfers - Dashboard",
+}
 
 export default function DashboardLayout({
     children,
@@ -10,7 +15,6 @@ export default function DashboardLayout({
         <SidebarProvider>
             <AppSidebar />
             <div className="w-full">
-                <SidebarTrigger />
                 <div>{children}</div>
             </div>
         </SidebarProvider>
