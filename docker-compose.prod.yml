@@ -1,0 +1,54 @@
+services:
+  # 1. Reverse Proxy (The Only Public Entry Point)
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - frontend
+      - backend
+    restart: always
+
+  # 2. Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    # No ports exposed! Nginx talks to this internally.
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_BACKEND_URL=https://yourdomain.com/api
+    restart: always
+
+  # 3. Flask Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    # No ports exposed! Flask is hidden from the outside world.
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    depends_on:
+      - db
+    restart: always
+
+  # 4. Postgres Database
+  db:
+    image: postgres:16-alpine
+    shm_size: 128mb # Recommended for Postgres production
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres_data:
