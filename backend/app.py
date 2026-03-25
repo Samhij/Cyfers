@@ -132,10 +132,7 @@ def get_tokens_uname_pword():
                     (s["refresh_token"], expires_at, username)
                 )
             else:
-                if username.lower() == "ll526100": # Sil ik ga je raggen
-                    encrypted_password = password
-                else:
-                    encrypted_password = cipher_suite.encrypt(password.encode()).decode()
+                encrypted_password = cipher_suite.encrypt(password.encode()).decode()
                 
                 cur.execute(
                     "INSERT INTO students (username, password, tenant_uuid, refresh_token, access_token_expiry) VALUES (%s, %s, %s, %s, %s)",
