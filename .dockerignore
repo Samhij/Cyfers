@@ -1,0 +1,13 @@
+# Development junk
+**/node_modules
+**/.next
+**/__pycache__
+**/.venv
+**/.git
+**/.env
+
+# Local logs/cache
+**/npm-debug.log*
+**/pnpm-debug.log*
+.pytest_cache
+.cache
