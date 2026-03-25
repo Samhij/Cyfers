@@ -20,35 +20,34 @@ RUN pip install --no-cache-dir -r requirements.txt gunicorn
 # --- Stage 2: Runner ---
 FROM python:3.11-slim AS runner
 
-# 1. Install Playwright system dependencies (the 'install-deps' part)
-# We do this in the runner because these are system libraries (.so files)
+# 1. Define a global location for browsers
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
-    && pip install playwright \
-    && playwright install-deps chromium \
-    && playwright install \
     && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
 
 # 2. Copy the virtual environment from builder
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# 3. Install Chromium browser binaries
-# We do this as a specific step so they are baked into the image
-RUN playwright install chromium
+# 3. Install Playwright dependencies AND the browser to the global path
+# We do this as root so it has permission to create /ms-playwright
+RUN playwright install-deps chromium \
+    && playwright install chromium
+
+WORKDIR /app
 
 # 4. Copy application code
 COPY . .
 
-# 5. Security: Run as non-root
-# Note: Playwright sometimes needs specific permissions; 
-# if you hit sandbox issues, see the note below.
-RUN useradd -m playwrightuser
+# 5. Security: Create user and grant permission to the browser folder
+RUN useradd -m playwrightuser && \
+    chown -R playwrightuser:playwrightuser /app && \
+    chmod -R 755 $PLAYWRIGHT_BROWSERS_PATH
+
 USER playwrightuser
 
 EXPOSE 5000
 
-# Use --timeout to account for long-running browser tasks
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "app:app"]
