@@ -7,6 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt flask
 RUN playwright install chromium
 RUN playwright install-deps chromium
 
-COPY . .
-
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+CMD ["python", "-m", "flask", "--app", "main", "run", "--host", "0.0.0.0", "--port", "5000", "--debug"]
