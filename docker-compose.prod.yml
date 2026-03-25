@@ -4,7 +4,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "80:3000"
     environment:
       NODE_ENV: production
       NEXT_PUBLIC_BACKEND_URL: http://backend:5000
@@ -16,8 +16,6 @@ services:
     build: ./backend
     working_dir: /app
     command: gunicorn --bind 0.0.0.0:5000 main:app
-    ports:
-      - "5000:5000"
     environment:
       DB_HOST: db
       PYTHONUNBUFFERED: "1"
