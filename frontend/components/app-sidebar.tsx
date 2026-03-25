@@ -104,40 +104,6 @@ export default function AppSidebar() {
                         </span>
                     </div>
                 </div>
-                {/* Student Info */}
-                <div className="mt-2 px-2 border-t pt-4">
-                    {loading ? (
-                        <div className="flex items-center gap-2">
-                            <Skeleton className="size-8 rounded-full" />
-                            <div className="space-y-1">
-                                <Skeleton className="h-3 w-24" />
-                                <Skeleton className="h-2 w-16" />
-                            </div>
-                        </div>
-                    ) : student ? (
-                        <div className="flex items-center gap-2">
-                            <div className="flex aspect-square size-8 items-center justify-center rounded-full bg-muted overflow-hidden">
-                                {student.pasfotoUrl ? (
-                                    <img
-                                        src={student.pasfotoUrl}
-                                        alt="Avatar"
-                                        className="size-full object-cover"
-                                    />
-                                ) : (
-                                    <UsersRound className="size-4" />
-                                )}
-                            </div>
-                            <div className="flex flex-col gap-0.5 overflow-hidden">
-                                <span className="text-sm font-medium truncate">
-                                    {student.roepnaam} {student.achternaam}
-                                </span>
-                                <span className="text-[10px] text-muted-foreground truncate">
-                                    {student.leerlingnummer}
-                                </span>
-                            </div>
-                        </div>
-                    ) : null}
-                </div>
             </SidebarHeader>
 
             {/* Content: Main Navigation */}
@@ -194,9 +160,45 @@ export default function AppSidebar() {
                 <SidebarGroup>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <SidebarMenuButton className="py-6 text-muted-foreground transition-all">
-                                <Settings className="size-5" />
-                                <span>Instellingen</span>
+                            {/* Student Info */}
+                            <SidebarMenuButton
+                                className="h-full items-center"
+                                asChild
+                            >
+                                <Link href="/gebruiker">
+                                    {loading ? (
+                                        <div className="flex items-center gap-2">
+                                            <Skeleton className="size-8 rounded-full" />
+                                            <div className="space-y-1">
+                                                <Skeleton className="h-3 w-24" />
+                                                <Skeleton className="h-2 w-16" />
+                                            </div>
+                                        </div>
+                                    ) : student ? (
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex aspect-square size-8 items-center justify-center rounded-full bg-muted overflow-hidden">
+                                                {student.pasfotoUrl ? (
+                                                    <img
+                                                        src={student.pasfotoUrl}
+                                                        alt="Avatar"
+                                                        className="size-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <UsersRound className="size-4" />
+                                                )}
+                                            </div>
+                                            <div className="flex flex-col gap-0.5 overflow-hidden">
+                                                <span className="text-sm font-medium truncate">
+                                                    {student.roepnaam}{" "}
+                                                    {student.achternaam}
+                                                </span>
+                                                <span className="text-[10px] text-muted-foreground truncate">
+                                                    {student.leerlingnummer}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ) : null}
+                                </Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                         <SidebarMenuItem>
