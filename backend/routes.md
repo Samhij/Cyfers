@@ -19,5 +19,11 @@ Refreshes the access token using a stored Somtoday refresh token.
 - **Response**: `200 OK` on success, sets a new `httpOnly` cookie `access_token`.
 
 ### `POST /logout`
-Clears the `access_token` cookie.
+Clears the `access_token` and `username` cookies.
 - **Response**: `200 OK`.
+
+## Student
+### `GET /student-data`
+Fetches the student data for the currently logged in user.
+- **Headers**: Expects `access_token` cookie.
+- **Response**: `200 OK` with student info object.

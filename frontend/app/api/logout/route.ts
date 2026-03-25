@@ -14,13 +14,16 @@ export async function POST(request: NextRequest) {
         const data = await response.json();
         const res = NextResponse.json(data, { status: response.status });
 
-        // Forward set-cookie headers
-        const setCookie = response.headers.get("set-cookie");
-        if (setCookie) {
-            res.headers.set("set-cookie", setCookie);
+        // Forward all set-cookie headers correctly
+        const setCookies = response.headers.getSetCookie();
+        if (setCookies && setCookies.length > 0) {
+            setCookies.forEach(cookie => {
+                res.headers.append("set-cookie", cookie);
+            });
         }
 
         return res;
+
     } catch (error) {
         console.error("Error in POST /api/logout:", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

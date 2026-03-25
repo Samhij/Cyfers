@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
         const response = await fetch(`${BACKEND_URL}/auth/get-tokens/refresh-token`, {
             method: "POST",
             headers: {
-                "Content-Type": request.headers.get("Content-Type") || "application/x-www-form-urlencoded",
+                "Content-Type": request.headers.get("Content-Type") || "application/x-www-form-urlencoded"
             },
             body: body,
         });
@@ -16,10 +16,12 @@ export async function POST(request: NextRequest) {
         const data = await response.json();
         const res = NextResponse.json(data, { status: response.status });
 
-        // Forward set-cookie-headers
-        const setCookie = response.headers.get("set-cookie");
-        if (setCookie) {
-            res.headers.set("set-cookie", setCookie);
+        // Forward all set-cookie headers correctly
+        const setCookies = response.headers.getSetCookie();
+        if (setCookies && setCookies.length > 0) {
+            setCookies.forEach(cookie => {
+                res.headers.append("set-cookie", cookie);
+            });
         }
 
         return res;

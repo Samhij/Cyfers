@@ -4,7 +4,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Cyfers - Dashboard",
-}
+};
 
 export default function DashboardLayout({
     children,
@@ -14,7 +14,7 @@ export default function DashboardLayout({
     return (
         <SidebarProvider>
             <AppSidebar />
-            <div className="w-full">
+            <div className="w-full flex flex-col">
                 <div>{children}</div>
             </div>
         </SidebarProvider>

@@ -74,6 +74,7 @@ def get_request_data():
     if request.is_json:
         return request.get_json()
     return request.form
+            
 
 @app.route("/schools", methods=["GET"])
 def get_schools():
@@ -94,6 +95,14 @@ def logout():
         httponly=True,
         samesite="Strict",
         secure=False  # Set to True in production with HTTPS
+    )
+    response.set_cookie(
+        "username",
+        value="",
+        expires=0,
+        httponly=False,
+        samesite="Strict",
+        secure=False
     )
     return response
 
@@ -138,6 +147,14 @@ def get_tokens_uname_pword():
             max_age=expires_in,
             secure=False  # Set to True in production
         )
+        response.set_cookie(
+            "username",
+            value=username,
+            httponly=False, # Allow frontend to read if needed, or keep True if just for session
+            samesite="Strict",
+            max_age=expires_in,
+            secure=False
+        )
         return response
     except Exception as e:
         logging.error(f"Login error for user {username}: {e}")
@@ -176,10 +193,32 @@ def get_tokens_refresh_token():
             samesite="Strict",
             max_age=expires_in
         )
+        response.set_cookie(
+            "username",
+            value=username,
+            httponly=False,
+            samesite="Strict",
+            max_age=expires_in
+        )
         return response
     except Exception as e:
         logging.error(f"Refresh error for user {username}: {e}")
         return jsonify({"message": "Token refresh failed."}), 401
+
+
+@app.route("/student-data", methods=["GET"])
+def get_student_data():
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    try:
+        student_info = somtoday.get_student_info("access_token", access_token)
+        return jsonify(student_info)
+    except Exception as e:
+        logging.error(f"Error fetching student data: {e}")
+        return jsonify({"message": "Could not fetch student data."}), 500
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

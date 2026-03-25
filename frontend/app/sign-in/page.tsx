@@ -1,11 +1,22 @@
 "use client";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+    AlertDialog,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
     CardDescription,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -20,7 +31,7 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, FileQuestionMark, HelpCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -121,7 +132,7 @@ export default function SignIn() {
                 </p>
             </div>
 
-            <Card className="w-full max-w-md bg-card px-6 py-10">
+            <Card className="w-full max-w-md bg-card px-6 py-10 bg-linear-to-tr from-background to-card">
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold">
                         Welkom terug
@@ -146,7 +157,7 @@ export default function SignIn() {
                         </Alert>
                     )}
 
-                    <form className="space-y-5" onSubmit={handleSignIn}>
+                    <form className="space-y-6" onSubmit={handleSignIn}>
                         <FieldGroup>
                             <Field>
                                 <Label
@@ -176,7 +187,7 @@ export default function SignIn() {
                                             )
                                         }
                                     />
-                                    <ComboboxContent>
+                                    <ComboboxContent className="bg-background">
                                         <ComboboxEmpty>
                                             Geen scholen gevonden.
                                         </ComboboxEmpty>
@@ -185,6 +196,7 @@ export default function SignIn() {
                                                 <ComboboxItem
                                                     key={item.naam}
                                                     value={item.uuid}
+                                                    className="cursor-pointer py-2"
                                                 >
                                                     {item.naam}
                                                 </ComboboxItem>
@@ -193,53 +205,82 @@ export default function SignIn() {
                                     </ComboboxContent>
                                 </Combobox>
                             </Field>
-                        </FieldGroup>
 
-                        <FieldGroup>
-                            <Label
-                                className="text-gray-200 text-xs font-bold uppercase leading-4 tracking-widest"
-                                htmlFor="leerlingnummer"
-                            >
-                                Leerlingnummer
-                            </Label>
-                            <Input
-                                type="text"
-                                id="leerlingnummer"
-                                onChange={(e) => setUsername(e.target.value)}
-                                value={username}
-                                placeholder="bv. 123456"
-                                className="h-10"
-                                required
-                            />
-                        </FieldGroup>
+                            <Field>
+                                <Label
+                                    className="text-gray-200 text-xs font-bold uppercase leading-4 tracking-widest"
+                                    htmlFor="leerlingnummer"
+                                >
+                                    Leerlingnummer
+                                </Label>
+                                <Input
+                                    type="text"
+                                    id="leerlingnummer"
+                                    onChange={(e) =>
+                                        setUsername(e.target.value)
+                                    }
+                                    value={username}
+                                    placeholder="bv. 123456"
+                                    className="h-10"
+                                    required
+                                />
+                            </Field>
 
-                        <FieldGroup>
-                            <Label
-                                className="text-gray-200 text-xs font-bold uppercase leading-4 tracking-widest"
-                                htmlFor="password"
-                            >
-                                Wachtwoord
-                            </Label>
-                            <Input
-                                type="password"
-                                id="password"
-                                onChange={(e) => setPassword(e.target.value)}
-                                value={password}
-                                placeholder="• • • • • • • •"
-                                className="h-10"
-                                required
-                            />
+                            <Field>
+                                <Label
+                                    className="text-gray-200 text-xs font-bold uppercase leading-4 tracking-widest"
+                                    htmlFor="password"
+                                >
+                                    Wachtwoord
+                                </Label>
+                                <Input
+                                    type="password"
+                                    id="password"
+                                    onChange={(e) =>
+                                        setPassword(e.target.value)
+                                    }
+                                    value={password}
+                                    placeholder="• • • • • • • •"
+                                    className="h-10"
+                                    required
+                                />
+                            </Field>
                         </FieldGroup>
 
                         <Button
                             type="submit"
-                            className="w-full text-center p-5 font-bold"
+                            className="w-full text-center py-6 font-bold"
                             disabled={loading}
                         >
-                            {loading ? "Even geduld..." : "Inloggen"}
+                            {loading
+                                ? "Even geduld..."
+                                : "Inloggen met Somtoday"}
                         </Button>
                     </form>
                 </CardContent>
+                <CardFooter className="bg-blur flex justify-center">
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="outline" className="p-5">
+                                <HelpCircle />
+                                Mijn school gebruikt Magister
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="bg-background">
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Magister</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Helaas ondersteunen wij Magister (nog) niet.
+                                    Cyfers is gebouwd om te werken met de
+                                    Somtoday API.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel className="w-full">Sluiten</AlertDialogCancel>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </CardFooter>
             </Card>
 
             <p className="text-sm text-muted-foreground">
