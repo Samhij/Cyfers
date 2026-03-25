@@ -5,7 +5,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
     ports:
-      - "80:3000" # Your PC port 80 -> Next.js port 3000
+      - "8001:3000"
     environment:
       - NODE_ENV=production
       # This is used by the Next.js SERVER, so it uses the Docker service name

@@ -1,6 +1,5 @@
 "use client";
 
-import { Hand, Waves } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
