@@ -27,3 +27,34 @@ Clears the `access_token` and `username` cookies.
 Fetches the student data for the currently logged in user.
 - **Headers**: Expects `access_token` cookie.
 - **Response**: `200 OK` with student info object.
+
+## Schedule
+### `GET /schedule/today`
+Fetches the formatted schedule for today.
+- **Headers**: Expects `access_token` cookie.
+- **Response**: `200 OK` with an array of lesson objects for today.
+  ```json
+  [
+    {
+      "lesuur": 1,
+      "start": "2026-03-26T08:30:00",
+      "einde": "2026-03-26T09:20:00",
+      "locatie": "A101",
+      "omschrijving": "...",
+      "vaknaam": "Wiskunde",
+      "bijlagen": []
+    }
+  ]
+  ```
+
+### `GET /schedule/week`
+Fetches the formatted schedule for a given week (or the current week if no week is specified).
+- **Headers**: Expects `access_token` cookie.
+- **Query Parameters**: `week` (optional) — ISO week number (e.g. `13`).
+- **Response**: `200 OK` with an object mapping day names to arrays of lesson objects.
+  ```json
+  {
+    "Monday": [ { "lesuur": 1, "start": "...", "einde": "...", "locatie": "...", "omschrijving": "...", "vaknaam": "...", "bijlagen": [] } ],
+    "Tuesday": [ ... ]
+  }
+  ```

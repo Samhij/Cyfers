@@ -166,7 +166,8 @@ export default function AppSidebar() {
                         <SidebarMenuItem>
                             {/* Student Info */}
                             <SidebarMenuButton
-                                className="h-full items-center"
+                                className="h-full items-center transition-all"
+                                isActive={pathname === "/gebruiker"}
                                 asChild
                             >
                                 <Link href="/gebruiker">
