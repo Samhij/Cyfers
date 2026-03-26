@@ -58,6 +58,10 @@ export default function AppSidebar() {
         async function fetchStudent() {
             try {
                 const res = await fetch("/api/student-data");
+                if (res.status === 401) {
+                    router.replace("/session-expired");
+                    return;
+                }
                 if (res.ok) {
                     const data = await res.json();
                     if (data.items && data.items.length > 0) {
@@ -71,7 +75,7 @@ export default function AppSidebar() {
             }
         }
         fetchStudent();
-    }, []);
+    }, [router]);
 
     async function handleSignOut() {
         const res = await fetch("/api/logout", {

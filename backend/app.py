@@ -104,6 +104,14 @@ def logout():
         samesite="Strict",
         secure=False
     )
+    response.set_cookie(
+        "last_username",
+        value="",
+        expires=0,
+        httponly=False,
+        samesite="Strict",
+        secure=False
+    )
     return response
 
 
@@ -156,6 +164,14 @@ def get_tokens_uname_pword():
             max_age=expires_in,
             secure=False
         )
+        response.set_cookie(
+            "last_username",
+            value=username,
+            httponly=False,
+            samesite="Strict",
+            max_age=60 * 60 * 24 * 30,
+            secure=False
+        )
         return response
     except Exception as e:
         logging.error(f"Login error for user {username}: {e}")
@@ -200,6 +216,13 @@ def get_tokens_refresh_token():
             httponly=False,
             samesite="Strict",
             max_age=expires_in
+        )
+        response.set_cookie(
+            "last_username",
+            value=username,
+            httponly=False,
+            samesite="Strict",
+            max_age=60 * 60 * 24 * 30
         )
         return response
     except Exception as e:
