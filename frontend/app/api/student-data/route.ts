@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
             headers: {
                 "Cookie": cookie,
             },
-            cache: "no-store",
+            next: { revalidate: 3600 },
         });
 
         const data = await response.json();
