@@ -254,7 +254,7 @@ def get_schedule_today():
         return jsonify({"message": "Unauthorized"}), 401
 
     try:
-        schedule = somtoday.get_schedule_formatted("access_token", access_token, week=14)
+        schedule = somtoday.get_schedule_formatted("access_token", access_token)
         today_name = datetime.now().strftime("%A")
         today_schedule = schedule.get(today_name, [])
         return jsonify(today_schedule)
