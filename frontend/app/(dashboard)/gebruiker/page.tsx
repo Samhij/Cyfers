@@ -1,6 +1,7 @@
 "use client";
 
 import StudentInfoWidget from "@/components/widgets/student-info-widget";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -30,14 +31,18 @@ export default function Gebruiker() {
     }, [router]);
 
     return (
-        <div className="px-12 py-10 space-y-6">
+        <div className="py-10 space-y-10 px-20">
             <div className="space-y-1">
                 <h1 className="text-4xl font-black">Accountoverzicht</h1>
             </div>
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                 <div className="w-full flex-1 min-w-0 space-y-6">
                     {/* Left column: for widgets with a larger width */}
-                    {student && <StudentInfoWidget student={student} />}
+                    {student ? (
+                        <StudentInfoWidget student={student} />
+                    ) : (
+                        <Skeleton className="h-40 w-full rounded-xl" />
+                    )}
                 </div>
                 <div className="w-full md:max-w-sm lg:max-w-sm xl:max-w-lg space-y-6">
                     {/* Right column: for widgets with a small width */}

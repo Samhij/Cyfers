@@ -1,49 +1,36 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 export default function NotFound() {
+    const router = useRouter();
+
     return (
-        <div className="fixed inset-0 bg-[#0000aa] text-white font-mono p-10 select-none">
-            <div className="max-w-3xl">
-                <p className="bg-white text-[#0000aa] inline-block px-2 mb-8 uppercase">
-                    Windows
-                </p>
-                <p className="mb-8 text-xl leading-relaxed">
-                    A problem has been detected and the URL has been terminated
-                    to prevent damage to your sanity.
-                </p>
-                <p className="mb-4">
-                    The error appears to be caused by the following file:
-                    PAGE_NOT_FOUND
-                </p>
-                <p className="mb-8 uppercase font-bold text-2xl tracking-widest">
-                    ERROR_404_NOT_FOUND
-                </p>
-                <p className="mb-4">
-                    * Check to make sure you typed the URL correctly.
-                </p>
-                <p className="mb-4">
-                    * If this is a new link, check with the developer.
-                </p>
-
-                <p className="mt-10">
-                    Press any key to return to the homepage
-                    <span className="inline-block ml-1 animate-[blink_1s_steps(2)_infinite]">
-                        _
-                    </span>
-                </p>
+        <div className="fixed inset-0 bg-background text-foreground flex items-center justify-center px-10">
+            <div className="max-w-lg w-full space-y-6">
+                <p className="text-8xl font-black text-primary">404</p>
+                <div className="space-y-2">
+                    <h1 className="text-3xl font-black">Pagina niet gevonden</h1>
+                    <p className="text-muted-foreground text-lg">
+                        De pagina die je zoekt bestaat niet of is verplaatst.
+                    </p>
+                </div>
+                <div className="h-px bg-border w-full" />
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => router.push("/home")}
+                        className="bg-primary text-primary-foreground font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                    >
+                        Ga naar home
+                    </button>
+                    <button
+                        onClick={() => router.back()}
+                        className="bg-secondary text-secondary-foreground font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                    >
+                        Ga terug
+                    </button>
+                </div>
             </div>
-
-            {/* Adding the blink keyframes directly */}
-            <style jsx global>{`
-                @keyframes blink {
-                    0% {
-                        opacity: 0;
-                    }
-                    100% {
-                        opacity: 1;
-                    }
-                }
-            `}</style>
         </div>
     );
 }
