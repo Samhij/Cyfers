@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, GraduationCap } from "lucide-react";
+import { CalendarDays, GraduationCap, X } from "lucide-react";
 import {
     Card,
     CardContent,
@@ -20,6 +20,7 @@ export default function ScheduleWidget() {
         start: string;
         einde: string;
         locatie: string;
+        type?: string | null;
     }> | null>(null);
 
     function getFormattedTime(isoString: string) {
@@ -91,32 +92,41 @@ export default function ScheduleWidget() {
                 <CardContent className="mt-6 mb-4">
                     <ul className="relative isolate space-y-8 before:absolute before:left-5 before:top-5 before:bottom-5 before:z-0 before:w-px before:bg-white/10">
                         {schedule?.length != 0 ? (
-                            schedule?.map((item, key) => (
+                            schedule?.map((item, key) => {
+                                const isUitval = item.type === "uitval";
+                                return (
                                 <li
                                     key={key}
                                     className="relative z-10 flex justify-between"
                                 >
                                     <div className="flex gap-4 items-center">
-                                        <div className="relative z-10 bg-linear-to-bl from-primary to-primary/50 rounded-lg p-2 text-black">
-                                            <GraduationCap size={25} />
+                                        <div className={`relative z-10 rounded-lg p-2 ${isUitval ? "bg-red-500/20 text-red-400" : "bg-linear-to-bl from-primary to-primary/50 text-black"}`}>
+                                            {isUitval ? <X size={25} /> : <GraduationCap size={25} />}
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="font-bold leading-5">
+                                            <span className={`font-bold leading-5 ${isUitval ? "line-through text-muted-foreground" : ""}`}>
                                                 {item.vaknaam}
                                             </span>
                                             <span className="text-xs text-muted-foreground font-normal uppercase leading-4 tracking-wide">
-                                                {getFormattedTime(item.start)}
-                                                {" - "}
-                                                {getFormattedTime(item.einde)}
-                                                {item.locatie && (
-                                                    <span>{" "}&#x2022;</span>
-                                                )}{" "}
-                                                {item.locatie}
+                                                {isUitval ? (
+                                                    <span className="text-red-400 font-semibold">Uitval</span>
+                                                ) : (
+                                                    <>
+                                                        {getFormattedTime(item.start)}
+                                                        {" - "}
+                                                        {getFormattedTime(item.einde)}
+                                                        {item.locatie && (
+                                                            <span>{" "}&#x2022;</span>
+                                                        )}{" "}
+                                                        {item.locatie}
+                                                    </>
+                                                )}
                                             </span>
                                         </div>
                                     </div>
                                 </li>
-                            ))
+                                );
+                            })
                         ) : (
                             <li>
                                 <div className="flex gap-4 items-center">

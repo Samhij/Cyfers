@@ -42,7 +42,8 @@ Fetches the formatted schedule for today.
       "locatie": "A101",
       "omschrijving": "...",
       "vaknaam": "Wiskunde",
-      "bijlagen": []
+      "bijlagen": [],
+      "type": "uitval | null"
     }
   ]
   ```
@@ -54,7 +55,7 @@ Fetches the formatted schedule for a given week (or the current week if no week 
 - **Response**: `200 OK` with an object mapping day names to arrays of lesson objects.
   ```json
   {
-    "Monday": [ { "lesuur": 1, "start": "...", "einde": "...", "locatie": "...", "omschrijving": "...", "vaknaam": "...", "bijlagen": [] } ],
+    "Monday": [ { "lesuur": 1, "start": "...", "einde": "...", "locatie": "...", "omschrijving": "...", "vaknaam": "...", "bijlagen": [], "type": "uitval | null" } ],
     "Tuesday": [ ... ]
   }
   ```
