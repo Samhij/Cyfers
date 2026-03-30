@@ -112,6 +112,14 @@ def logout():
         samesite="Strict",
         secure=False
     )
+    response.set_cookie(
+        "tenant_uuid",
+        value="",
+        expires=0,
+        httponly=False,
+        samesite="Strict",
+        secure=False
+    )
     return response
 
 
@@ -175,6 +183,14 @@ def get_tokens_uname_pword():
             max_age=60 * 60 * 24 * 30,
             secure=False
         )
+        response.set_cookie(
+            "tenant_uuid",
+            value=tenant_uuid,
+            httponly=False,
+            samesite="Strict",
+            max_age=60 * 60 * 24 * 30,
+            secure=False
+        )
         return response
     except Exception as e:
         logging.error(f"Login error for user {username}: {e}")
@@ -196,9 +212,12 @@ def get_tokens_refresh_token():
         expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
 
         with get_db_cursor() as cur:
-            cur.execute("SELECT id FROM students WHERE username = %s", (username,))
-            if not cur.fetchone():
+            cur.execute("SELECT id, tenant_uuid FROM students WHERE username = %s", (username,))
+            row = cur.fetchone()
+            if not row:
                 return jsonify({"message": "Account not found."}), 404
+
+            tenant_uuid = row[1]
             
             cur.execute(
                 "UPDATE students SET refresh_token = %s, access_token_expiry = %s WHERE username = %s",
@@ -223,6 +242,13 @@ def get_tokens_refresh_token():
         response.set_cookie(
             "last_username",
             value=username,
+            httponly=False,
+            samesite="Strict",
+            max_age=60 * 60 * 24 * 30
+        )
+        response.set_cookie(
+            "tenant_uuid",
+            value=tenant_uuid,
             httponly=False,
             samesite="Strict",
             max_age=60 * 60 * 24 * 30

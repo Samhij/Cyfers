@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const BACKEND_URL = "http://backend:5000";
+import { getBackendUrl } from "@/lib/backend-url";
 
 export async function POST(request: NextRequest) {
     try {
-        const response = await fetch(`${BACKEND_URL}/logout`, {
+        const response = await fetch(`${getBackendUrl()}/logout`, {
             method: "POST",
             headers: {
                 "Cookie": request.headers.get("Cookie") || "",

@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const BACKEND_URL = "http://backend:5000";
+import { getBackendUrl } from "@/lib/backend-url";
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.text();
-        const response = await fetch(`${BACKEND_URL}/auth/get-tokens/refresh-token`, {
+        const response = await fetch(`${getBackendUrl()}/auth/get-tokens/refresh-token`, {
             method: "POST",
             headers: {
                 "Content-Type": request.headers.get("Content-Type") || "application/x-www-form-urlencoded"

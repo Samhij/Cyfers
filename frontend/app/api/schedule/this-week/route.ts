@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const BACKEND_URL = "http://backend:5000";
+import { getBackendUrl } from "@/lib/backend-url";
 
 export async function GET(request: NextRequest) {
     try {
@@ -8,7 +7,7 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url);
         const week = searchParams.get("week");
 
-        const backendUrl = new URL(`${BACKEND_URL}/schedule/week`);
+        const backendUrl = new URL(`${getBackendUrl()}/schedule/week`);
         if (week) {
             backendUrl.searchParams.set("week", week);
         }

@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const BACKEND_URL = "http://backend:5000";
+import { getBackendUrl } from "@/lib/backend-url";
 
 export async function GET(request: NextRequest) {
     try {
         const cookie = request.headers.get("Cookie") || "";
 
-        const response = await fetch(`${BACKEND_URL}/schedule/today`, {
+        const response = await fetch(`${getBackendUrl()}/schedule/today`, {
             method: "GET",
             headers: {
                 "Cookie": cookie,
