@@ -59,3 +59,37 @@ Fetches the formatted schedule for a given week (or the current week if no week 
     "Tuesday": [ ... ]
   }
   ```
+
+## Grades
+### `GET /grades`
+Fetches the formatted grade list for the logged-in student.
+- **Headers**: Expects `access_token` cookie.
+- **Response**: `200 OK` with an array of grade objects.
+  ```json
+  [
+    {
+      "date": "2026-03-26T12:30:00",
+      "subject": "Wiskunde",
+      "grade": 7.8,
+      "period": "Periode 3"
+    }
+  ]
+  ```
+
+### `GET /grades/subjects`
+Fetches grades grouped by subject with a computed average per subject.
+- **Headers**: Expects `access_token` cookie.
+- **Response**: `200 OK` with an object keyed by subject name.
+  ```json
+  {
+    "Wiskunde": {
+      "grades": [7.8, 8.1],
+      "average": 7.95
+    }
+  }
+  ```
+
+### `GET /grades/moment`
+Fetches the next grade publication moment for the logged-in student.
+- **Headers**: Expects `access_token` cookie.
+- **Response**: `200 OK` with the Somtoday `value` payload for the next result publication moment.

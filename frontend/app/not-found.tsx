@@ -8,7 +8,7 @@ const KONAMI_CODE = [
     "ArrowDown", "ArrowDown",
     "ArrowLeft", "ArrowRight",
     "ArrowLeft", "ArrowRight",
-    "b", "a",
+    "b", "a", "Enter"
 ];
 
 export default function NotFound() {
@@ -27,7 +27,7 @@ export default function NotFound() {
                 progressRef.current += 1;
                 if (progressRef.current === KONAMI_CODE.length) {
                     progressRef.current = 0;
-                    setKonamiActive(true);
+                    setKonamiActive(k => !k);
                 }
             } else {
                 progressRef.current = e.key === KONAMI_CODE[0] ? 1 : 0;

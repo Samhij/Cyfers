@@ -99,10 +99,18 @@ export default function SignIn() {
                 }),
             });
 
+            const result = await res.json();
+
             if (!res.ok) {
-                console.error("Sign in failed:", res.status);
+                console.error("Sign in failed:", res.status, result);
                 setLoading(false);
-                setError(res.statusText);
+                setError(
+                    result?.error ||
+                    result?.message ||
+                    (res.status === 401
+                        ? "Ongeldige gebruikersnaam of wachtwoord"
+                        : res.statusText || "Er is iets fout gegaan bij inloggen")
+                );
                 return;
             }
 

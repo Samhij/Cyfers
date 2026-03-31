@@ -12,16 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Lesson } from "@/components/schedule-grid";
 
 export default function ScheduleWidget() {
     const [loading, setLoading] = useState<boolean>(true);
-    const [schedule, setSchedule] = useState<Array<{
-        vaknaam: string;
-        start: string;
-        einde: string;
-        locatie: string;
-        type?: string | null;
-    }> | null>(null);
+    const [schedule, setSchedule] = useState<Lesson[] | null>(null);
 
     function getFormattedTime(isoString: string) {
         const date = new Date(isoString);
@@ -32,6 +27,37 @@ export default function ScheduleWidget() {
         });
 
         return time.toString();
+    }
+
+    function getLessonState(item: { start: string; einde: string }) {
+        const now = Date.now();
+        const start = new Date(item.start).getTime();
+        const end = new Date(item.einde).getTime();
+
+        if (end < now) {
+            return {
+                name: "past",
+                cardClass: "opacity-60 blur-none",
+                titleClass: "text-muted-foreground line-through",
+                timeClass: "text-muted-foreground",
+            };
+        }
+
+        if (start <= now && now <= end) {
+            return {
+                name: "current",
+                cardClass: "ring-2 ring-primary/80 bg-primary/10",
+                titleClass: "text-primary font-semibold",
+                timeClass: "text-primary",
+            };
+        }
+
+        return {
+            name: "upcoming",
+            cardClass: "",
+            titleClass: "text-white",
+            timeClass: "text-muted-foreground",
+        };
     }
 
     async function getSchedule() {
@@ -51,6 +77,11 @@ export default function ScheduleWidget() {
     useEffect(() => {
         getSchedule();
     }, []);
+
+    const hasLessons = schedule?.length != 0;
+    const allLessonsPast =
+        hasLessons &&
+        schedule?.every((item) => getLessonState(item).name === "past");
 
     if (loading) {
         return (
@@ -89,42 +120,60 @@ export default function ScheduleWidget() {
                 <CardTitle className="text-lg font-bold leading-7">
                     Rooster van vandaag
                 </CardTitle>
-                <CardContent className="mt-6 mb-4">
-                    <ul className="relative isolate space-y-8 before:absolute before:left-5 before:top-5 before:bottom-5 before:z-0 before:w-px before:bg-white/10">
-                        {schedule?.length != 0 ? (
+                <CardContent className="mt-4 mb-3">
+                    <ul className="relative isolate space-y-3">
+                        {hasLessons && !allLessonsPast ? (
                             schedule?.map((item, key) => {
                                 const isUitval = item.type === "uitval";
+                                const lessonState = getLessonState(item);
                                 return (
-                                <li
-                                    key={key}
-                                    className="relative z-10 flex justify-between"
-                                >
-                                    <div className="flex gap-4 items-center">
-                                        <div className={`relative z-10 rounded-lg p-2 ${isUitval ? "bg-red-500/20 text-red-400" : "bg-linear-to-bl from-primary to-primary/50 text-black"}`}>
-                                            {isUitval ? <X size={25} /> : <GraduationCap size={25} />}
+                                    <li
+                                        key={key}
+                                        className={`relative z-10 flex justify-between rounded-xl p-3 ${lessonState.cardClass}`}
+                                    >
+                                        <div className="flex gap-4 items-center">
+                                            <div
+                                                className={`relative z-10 rounded-lg p-2 w-11 h-11 flex items-center justify-center text-xl font-bold ${isUitval ? "bg-red-500/20 text-red-400" : "bg-linear-to-bl from-primary to-primary/50 text-black"}`}
+                                            >
+                                                {isUitval
+                                                    ? "X"
+                                                    : (item.lesuur ?? "?")}
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span
+                                                    className={`font-bold leading-5 ${isUitval ? "line-through text-muted-foreground" : lessonState.titleClass}`}
+                                                >
+                                                    {item.vaknaam}
+                                                </span>
+                                                <span
+                                                    className={`text-xs font-normal uppercase leading-4 tracking-wide ${lessonState.timeClass}`}
+                                                >
+                                                    {isUitval ? (
+                                                        <span className="text-red-400 font-semibold">
+                                                            Uitval
+                                                        </span>
+                                                    ) : (
+                                                        <>
+                                                            {getFormattedTime(
+                                                                item.start,
+                                                            )}
+                                                            {" - "}
+                                                            {getFormattedTime(
+                                                                item.einde,
+                                                            )}
+                                                            {item.locatie && (
+                                                                <span>
+                                                                    {" "}
+                                                                    &#x2022;
+                                                                </span>
+                                                            )}{" "}
+                                                            {item.locatie}
+                                                        </>
+                                                    )}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className="flex flex-col">
-                                            <span className={`font-bold leading-5 ${isUitval ? "line-through text-muted-foreground" : ""}`}>
-                                                {item.vaknaam}
-                                            </span>
-                                            <span className="text-xs text-muted-foreground font-normal uppercase leading-4 tracking-wide">
-                                                {isUitval ? (
-                                                    <span className="text-red-400 font-semibold">Uitval</span>
-                                                ) : (
-                                                    <>
-                                                        {getFormattedTime(item.start)}
-                                                        {" - "}
-                                                        {getFormattedTime(item.einde)}
-                                                        {item.locatie && (
-                                                            <span>{" "}&#x2022;</span>
-                                                        )}{" "}
-                                                        {item.locatie}
-                                                    </>
-                                                )}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </li>
+                                    </li>
                                 );
                             })
                         ) : (

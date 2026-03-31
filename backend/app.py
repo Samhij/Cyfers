@@ -341,5 +341,47 @@ def get_schedule_week_route():
         return jsonify({"message": "Could not fetch schedule."}), 500
 
 
+@app.route("/grades", methods=["GET"])
+def get_grades_route():
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        return jsonify({"message": "Unauthorized"}), 401
+
+    try:
+        grades = somtoday.get_grades_formatted("access_token", access_token)
+        return jsonify(grades)
+    except Exception as e:
+        logging.error(f"Error fetching grades: {e}")
+        return jsonify({"message": "Could not fetch grades."}), 500
+
+
+@app.route("/grades/subjects", methods=["GET"])
+def get_grades_subjects_route():
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        return jsonify({"message": "Unauthorized"}), 401
+
+    try:
+        grades = somtoday.get_grades_subjects("access_token", access_token)
+        return jsonify(grades)
+    except Exception as e:
+        logging.error(f"Error fetching grades by subject: {e}")
+        return jsonify({"message": "Could not fetch grades by subject."}), 500
+
+
+@app.route("/grades/moment", methods=["GET"])
+def get_grades_moment_route():
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        return jsonify({"message": "Unauthorized"}), 401
+
+    try:
+        grades_moment = somtoday.get_grades_moment("access_token", access_token)
+        return jsonify({"value": grades_moment})
+    except Exception as e:
+        logging.error(f"Error fetching grades moment: {e}")
+        return jsonify({"message": "Could not fetch grades moment."}), 500
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

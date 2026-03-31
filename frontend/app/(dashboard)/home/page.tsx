@@ -4,6 +4,7 @@ import ScheduleWidget from "@/components/widgets/schedule-widget";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import GradesWidget from "@/components/widgets/grades-widget";
 
 export default function Home() {
     const [student, setStudent] = useState<any>(null);
@@ -79,9 +80,9 @@ export default function Home() {
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                 <div className="w-full flex-1 min-w-0 space-y-6">
                     {/* Left column: for widgets with a larger width */}
-                    <ScheduleWidget />
+                    <GradesWidget />
                 </div>
-                <div className="w-full md:max-w-sm lg:max-w-sm xl:max-w-lg space-y-6">
+                <div className="w-full md:max-w-full lg:max-w-sm xl:max-w-lg space-y-6">
                     {/* Right column: for widgets with a small width */}
                     <ScheduleWidget />
                 </div>
