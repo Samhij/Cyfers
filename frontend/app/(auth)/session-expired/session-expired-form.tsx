@@ -114,7 +114,7 @@ export function SessionExpiredForm({
             }
 
             setLoading(false);
-            router.push("/");
+            router.push("/home");
         } catch (error) {
             console.error("Sign in error:", error);
             setLoading(false);

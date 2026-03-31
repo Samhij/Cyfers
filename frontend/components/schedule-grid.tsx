@@ -8,13 +8,14 @@ import { cn } from "@/lib/utils";
 
 export interface Lesson {
     lesuur: number | null;
+    lesuurr?: number | null;
     start: string;
     einde: string;
     locatie: string;
     omschrijving: string;
     vaknaam: string;
     bijlagen: unknown[];
-    docent?: string;
+    docent?: string | string[] | null;
     type?: string;
 }
 
@@ -83,6 +84,23 @@ function getLessonType(
     return "normal";
 }
 
+function getDocentLabel(docent: Lesson["docent"]): string {
+    if (Array.isArray(docent)) {
+        const value = docent.find((item) => item && item.trim());
+        return value ?? "ZTM";
+    }
+
+    if (typeof docent === "string" && docent.trim()) {
+        return docent;
+    }
+
+    return "ZTM";
+}
+
+function getLessonHour(lesson: Lesson): number | null {
+    return lesson.lesuur ?? lesson.lesuurr ?? null;
+}
+
 function getMondayOfWeek(schedule: WeekSchedule): Date | null {
     for (const day of DAY_ORDER) {
         const lessons = schedule[day];
@@ -118,7 +136,9 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
     const type = getLessonType(lesson);
     const durationMin = endMin - startMin;
     const isTiny = durationMin < 25;
-    const lesuurLabel = lesson.lesuur != null ? `${lesson.lesuur}E UUR` : null;
+    const lesuur = getLessonHour(lesson);
+    const lesuurLabel = lesuur != null ? `${lesuur}e uur` : null;
+    const docentLabel = getDocentLabel(lesson.docent);
 
     // ── Pauze ──
     if (type === "pauze") {
@@ -162,11 +182,11 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
                             </span>
                         </div>
                     )}
-                    {lesson.docent && (
+                    {docentLabel !== "ZTM" && (
                         <div className="flex items-center gap-1.5 text-muted-foreground/70">
                             <Users size={11} />
                             <span className="text-[11px] font-medium">
-                                {lesson.docent}
+                                {docentLabel}
                             </span>
                         </div>
                     )}
@@ -213,9 +233,9 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
                             ) : (
                                 <div />
                             )}
-                            {lesson.docent && (
+                            {docentLabel !== "ZTM" && (
                                 <span className="text-[10px] font-bold uppercase text-muted-foreground/40 tracking-wide">
-                                    {lesson.docent}
+                                    {docentLabel}
                                 </span>
                             )}
                         </div>
@@ -232,7 +252,7 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
             style={{ top, height }}
         >
             {/* Left accent bar */}
-            <div className="w-[3px] shrink-0 bg-indigo-500 rounded-l-lg" />
+            <div className="w-0.75 shrink-0 bg-indigo-500 rounded-l-lg" />
 
             <div
                 className={cn(
@@ -266,7 +286,7 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
                             <div />
                         )}
                         <span className="text-[11px] font-bold uppercase text-indigo-400 tracking-wide">
-                            {lesson.docent ?? "ZTM"}
+                            {lesson.docent}
                         </span>
                     </div>
                 )}

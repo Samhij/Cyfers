@@ -5,6 +5,10 @@ export function proxy(request: NextRequest) {
     const lastUsername = request.cookies.get("last_username")?.value;
     const { pathname } = request.nextUrl;
 
+    if (pathname === "/" && accessToken) {
+        return NextResponse.redirect(new URL("/home", request.url));
+    }
+
     if (pathname === "/home" || pathname === "/cijfers" || pathname === "/rooster" || pathname === "/verzuim") {
         if (!accessToken) {
             const redirectPath = lastUsername ? "/session-expired" : "/sign-in";
@@ -14,16 +18,16 @@ export function proxy(request: NextRequest) {
     }
 
     if (pathname === "/sign-in" && accessToken) {
-        return NextResponse.redirect(new URL("/", request.url));
+        return NextResponse.redirect(new URL("/home", request.url));
     }
 
     if (pathname === "/session-expired" && accessToken) {
-        return NextResponse.redirect(new URL("/", request.url));
+        return NextResponse.redirect(new URL("/home", request.url));
     }
 
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/home", "/cijfers", "/rooster", "/verzuim", "/sign-in", "/session-expired"],
+    matcher: ["/", "/home", "/cijfers", "/rooster", "/verzuim", "/sign-in", "/session-expired"],
 };

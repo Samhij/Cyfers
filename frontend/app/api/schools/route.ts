@@ -8,6 +8,6 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(data, { status: response.status });
     } catch (error) {
         console.error("Error in GET /api/schools:", error);
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ organisations: [] }, { status: 200 });
     }
 }

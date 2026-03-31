@@ -108,7 +108,7 @@ export default function SignIn() {
 
             console.log("Sign in successful!");
             setLoading(false);
-            router.push("/");
+            router.push("/home");
         } catch (error) {
             console.error("Sign in error:", error);
             setLoading(false);

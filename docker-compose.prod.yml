@@ -14,7 +14,8 @@ services:
       - BACKEND_URL=http://backend:5000
     restart: always
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
   # 2. Flask Backend (Private)
   backend:
@@ -31,8 +32,15 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: always
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/health').read()"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
 
   # 3. Postgres Database (Private)
   db:
@@ -47,6 +55,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
 
 volumes:
   postgres_data:

@@ -58,7 +58,28 @@ def get_db_cursor():
     finally:
         db_pool.putconn(conn)
 
-somtoday.init()
+
+def normalize_schedule_lesson(lesson):
+    normalized = dict(lesson)
+    normalized["lesuur"] = (
+        normalized.get("lesuur")
+        if normalized.get("lesuur") is not None
+        else normalized.get("lesuurr")
+    )
+    return normalized
+
+
+def normalize_schedule_payload(payload):
+    if isinstance(payload, dict):
+        return {
+            day: [normalize_schedule_lesson(lesson) for lesson in lessons]
+            for day, lessons in payload.items()
+        }
+
+    if isinstance(payload, list):
+        return [normalize_schedule_lesson(lesson) for lesson in payload]
+
+    return payload
 
 app = Flask(__name__)
 # In production, 'origins' should be restricted to the actual frontend domain
@@ -68,6 +89,18 @@ CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 def handle_exception(e):
     logging.error(f"Unhandled error: {e}", exc_info=True)
     return jsonify({"message": "An internal server error occurred."}), 500
+
+
+@app.route("/health", methods=["GET"])
+def health_check():
+    try:
+        with get_db_cursor() as cur:
+            cur.execute("SELECT 1")
+            cur.fetchone()
+        return jsonify({"status": "ok"}), 200
+    except Exception as e:
+        logging.error(f"Health check failed: {e}")
+        return jsonify({"status": "unhealthy"}), 503
 
 def get_request_data():
     """Helper to get data from either JSON or Form-data."""
@@ -282,7 +315,7 @@ def get_schedule_today():
     try:
         schedule = somtoday.get_schedule_formatted("access_token", access_token)
         today_name = datetime.now().strftime("%A")
-        today_schedule = schedule.get(today_name, [])
+        today_schedule = normalize_schedule_payload(schedule.get(today_name, []))
         return jsonify(today_schedule)
     except Exception as e:
         logging.error(f"Error fetching today's schedule: {e}")
@@ -302,7 +335,7 @@ def get_schedule_week_route():
             schedule = somtoday.get_schedule_formatted("access_token", access_token, week=week)
         else:
             schedule = somtoday.get_schedule_formatted("access_token", access_token)
-        return jsonify(schedule)
+        return jsonify(normalize_schedule_payload(schedule))
     except Exception as e:
         logging.error(f"Error fetching week schedule: {e}")
         return jsonify({"message": "Could not fetch schedule."}), 500
