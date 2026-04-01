@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, GraduationCap, X } from "lucide-react";
+import { CalendarDays, Coffee, GraduationCap } from "lucide-react";
 import {
     Card,
     CardContent,
@@ -78,10 +78,72 @@ export default function ScheduleWidget() {
         getSchedule();
     }, []);
 
-    const hasLessons = schedule?.length != 0;
+    function extractLessonHour(item: any): number | null {
+        const v = (item && (item.lesuur ?? item.lesuurr)) ?? null;
+        if (v === null || v === undefined) return null;
+        const n = typeof v === "number" ? v : Number(v);
+        return Number.isFinite(n) ? n : null;
+    }
+
+    const processedSchedule: Lesson[] = (() => {
+        if (!schedule || schedule.length === 0) return [];
+        const items = [...schedule].map((it) => ({ ...it }));
+        items.sort(
+            (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+        );
+        const out: Lesson[] = [];
+        for (let i = 0; i < items.length; i++) {
+            const curr = items[i];
+            if (out.length === 0) {
+                out.push(curr);
+                continue;
+            }
+            const prev = out[out.length - 1];
+            const prevHour = extractLessonHour(prev);
+            const currHour = extractLessonHour(curr);
+
+            if (prevHour != null && currHour != null && currHour - prevHour > 1) {
+                const gapCount = currHour - prevHour - 1;
+                const prevEnd = new Date(prev.einde).getTime();
+                const currStart = new Date(curr.start).getTime();
+                if (currStart > prevEnd) {
+                    const slotDuration = Math.floor((currStart - prevEnd) / gapCount);
+                    for (let g = 0; g < gapCount; g++) {
+                        const s = new Date(prevEnd + g * slotDuration);
+                        const e = new Date(
+                            g === gapCount - 1
+                                ? currStart
+                                : prevEnd + (g + 1) * slotDuration,
+                        );
+                        if (e.getTime() <= s.getTime()) {
+                            e.setTime(s.getTime() + 10 * 60 * 1000);
+                        }
+                        const placeholder: Lesson = {
+                            ...curr,
+                            lesuur: prevHour + (g + 1),
+                            lesuurr: null,
+                            vaknaam: "",
+                            omschrijving: "",
+                            locatie: "",
+                            bijlagen: [],
+                            docent: null,
+                            type: "tussenuur",
+                            start: s.toISOString(),
+                            einde: e.toISOString(),
+                        };
+                        out.push(placeholder);
+                    }
+                }
+            }
+            out.push(curr);
+        }
+        return out;
+    })();
+
+    const hasLessons = processedSchedule.length !== 0;
     const allLessonsPast =
         hasLessons &&
-        schedule?.every((item) => getLessonState(item).name === "past");
+        processedSchedule.every((item) => getLessonState(item).name === "past");
 
     if (loading) {
         return (
@@ -123,9 +185,41 @@ export default function ScheduleWidget() {
                 <CardContent className="mt-4 mb-3">
                     <ul className="relative isolate space-y-3">
                         {hasLessons && !allLessonsPast ? (
-                            schedule?.map((item, key) => {
+                            processedSchedule.map((item, key) => {
                                 const isUitval = item.type === "uitval";
+                                const isTussenuur = item.type === "tussenuur";
                                 const lessonState = getLessonState(item);
+                                const hasLesson = Boolean(
+                                    (item.vaknaam && String(item.vaknaam).trim()) ||
+                                        (item.omschrijving && String(item.omschrijving).trim()),
+                                );
+                                const isEmptySlot = !hasLesson && !isUitval && item.type !== "pauze";
+
+                                if (isTussenuur) {
+                                    return (
+                                        <li
+                                            key={key}
+                                            className="relative z-10 rounded-xl border border-dashed border-white/10 bg-white/3 px-3 py-3"
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div className="relative z-10 size-11 shrink-0 rounded-full bg-white/5 flex items-center justify-center text-muted-foreground/75">
+                                                    <Coffee size={16} />
+                                                </div>
+                                                <div className="min-w-0 flex-1 flex flex-col">
+                                                    <span className="font-semibold leading-5 text-white/85">
+                                                        Tussenuur
+                                                    </span>
+                                                    <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground/65">
+                                                        {getFormattedTime(item.start)}
+                                                        {" - "}
+                                                        {getFormattedTime(item.einde)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    );
+                                }
+
                                 return (
                                     <li
                                         key={key}
@@ -141,9 +235,11 @@ export default function ScheduleWidget() {
                                             </div>
                                             <div className="flex flex-col">
                                                 <span
-                                                    className={`font-bold leading-5 ${isUitval ? "line-through text-muted-foreground" : lessonState.titleClass}`}
+                                                    className={`font-bold leading-5 ${isUitval ? "line-through text-muted-foreground" : lessonState.titleClass} ${isEmptySlot ? "italic text-muted-foreground" : ""}`}
                                                 >
-                                                    {item.vaknaam}
+                                                    {isEmptySlot
+                                                        ? "Tussenuur"
+                                                        : (item.vaknaam ?? item.omschrijving)}
                                                 </span>
                                                 <span
                                                     className={`text-xs font-normal uppercase leading-4 tracking-wide ${lessonState.timeClass}`}
