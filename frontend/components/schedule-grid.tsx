@@ -265,7 +265,7 @@ function LessonCard({ lesson }: { lesson: Lesson }) {
                         <span className="text-[9px] font-black tracking-widest uppercase text-indigo-400">
                             {lesuurLabel ?? ""}
                         </span>
-                        <span className="text-[10px] text-muted-foreground/50 tabular-nums">
+                        <span className="text-[10px] text-indigo-300 font-semibold tabular-nums">
                             {formatTime(lesson.start)}
                         </span>
                     </div>
