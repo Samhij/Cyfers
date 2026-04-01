@@ -17,12 +17,10 @@ export default function Cijfers() {
             </div>
 
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-                <div className="w-full flex-1 min-w-0 space-y-6">
-                    {/* Left column: for widgets with a larger width */}
+                <div className="w-full space-y-6">
                     <SubjectsWidget />
                 </div>
-                <div className="w-full md:max-w-full lg:max-w-sm xl:max-w-lg space-y-6">
-                    {/* Right column: for widgets with a small width */}
+                <div className="w-full space-y-6">
                     <GradesWidget amount={5} columns={1} />
                 </div>
             </div>

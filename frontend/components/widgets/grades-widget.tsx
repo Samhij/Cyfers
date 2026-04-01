@@ -22,7 +22,9 @@ function formatPublishedDate(date: string) {
     const now = new Date();
     const differenceInDays = Math.max(
         0,
-        Math.floor((now.getTime() - parsedDate.getTime()) / (1000 * 60 * 60 * 24))
+        Math.floor(
+            (now.getTime() - parsedDate.getTime()) / (1000 * 60 * 60 * 24),
+        ),
     );
 
     if (differenceInDays < 7) {
@@ -38,7 +40,13 @@ function formatPublishedDate(date: string) {
     return `${months} ${months === 1 ? "maand" : "maanden"} geleden`;
 }
 
-function Grade({ item }: { item: Grade }) {
+function GradeCard({
+    item,
+    compact = false,
+}: {
+    item: Grade;
+    compact?: boolean;
+}) {
     const gradeColorClass =
         item.grade < 5.5
             ? "text-red-500"
@@ -55,15 +63,19 @@ function Grade({ item }: { item: Grade }) {
                     >
                         {item.grade}
                     </span>
-                    <span className="text-xs font-bold uppercase bg-[#33323D] p-2 rounded-full">
+                    <span className="text-xs font-bold uppercase bg-[#33323D] px-3 py-2 rounded-full">
                         {item.subject}
                     </span>
                 </CardTitle>
-
                 <span className="text-muted-foreground">
                     {formatPublishedDate(item.date)}
                 </span>
-                <Progress value={item.grade * 10} className="h-2 bg-gray-900" />
+                {!compact && (
+                    <Progress
+                        value={item.grade * 10}
+                        className="h-2 bg-gray-900"
+                    />
+                )}
             </CardHeader>
         </Card>
     );
@@ -72,7 +84,7 @@ function Grade({ item }: { item: Grade }) {
 export default function GradesWidget({
     amount,
     columns,
-    compact,
+    compact = false,
 }: {
     amount: number;
     columns: number;
@@ -134,15 +146,19 @@ export default function GradesWidget({
         <Card className="bg-[#19191c] pb-8">
             <CardHeader>
                 <CardTitle className="flex items-center justify-between px-4">
-                    <span className="text-2xl my-2 font-bold">Recente cijfers</span>
+                    <span className="text-2xl my-2 font-bold">
+                        Recente cijfers
+                    </span>
                 </CardTitle>
-                <CardContent className={`grid grid-cols-${columns} gap-4 place-items-center mt-4`}>
+                <CardContent
+                    className={`grid grid-cols-${columns} gap-4 place-items-center mt-4`}
+                >
                     {grades?.slice(0, amount).map((item) => (
                         <div
                             className="w-full"
                             key={`${item.subject}-${item.date}-${item.grade}`}
                         >
-                            <Grade item={item} />
+                            <GradeCard item={item} compact={compact} />
                         </div>
                     ))}
                 </CardContent>

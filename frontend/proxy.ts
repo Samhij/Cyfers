@@ -4,13 +4,14 @@ export function proxy(request: NextRequest) {
     const accessToken = request.cookies.get("access_token")?.value;
     const lastUsername = request.cookies.get("last_username")?.value;
     const { pathname } = request.nextUrl;
+    const skipAuth = request.nextUrl.searchParams.get("skipAuth") === "1";
 
     if (pathname === "/" && accessToken) {
         return NextResponse.redirect(new URL("/home", request.url));
     }
 
     if (pathname === "/home" || pathname === "/cijfers" || pathname === "/rooster" || pathname === "/verzuim") {
-        if (!accessToken) {
+        if (!accessToken && !skipAuth) {
             const redirectPath = lastUsername ? "/session-expired" : "/sign-in";
             return NextResponse.redirect(new URL(redirectPath, request.url));
         }

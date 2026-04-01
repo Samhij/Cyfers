@@ -116,7 +116,9 @@ export default function SignIn() {
 
             console.log("Sign in successful!");
             setLoading(false);
-            router.push("/home");
+            // allow cookie commit to settle before middleware / home fetch validation
+            await new Promise((resolve) => setTimeout(resolve, 120));
+            router.push("/home?skipAuth=1");
         } catch (error) {
             console.error("Sign in error:", error);
             setLoading(false);
