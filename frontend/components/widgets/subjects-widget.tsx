@@ -16,6 +16,7 @@ import {
     Sigma,
     Utensils,
 } from "lucide-react";
+import { slugify } from "@/lib/slugify";
 
 interface Subject {
     grades: number[];
@@ -45,25 +46,6 @@ export default function SubjectsWidget() {
 
     function formatAverage(average: number) {
         return (Math.round(average * 10) / 10).toFixed(1);
-    }
-
-    function slugify(str: string) {
-        str = str.replace(/^\s+|\s+$/g, ""); // trim
-        str = str.toLowerCase();
-
-        // remove accents, swap ñ for n, etc
-        var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
-        var to = "aaaaeeeeiiiioooouuuunc------";
-        for (var i = 0, l = from.length; i < l; i++) {
-            str = str.replace(new RegExp(from.charAt(i), "g"), to.charAt(i));
-        }
-
-        str = str
-            .replace(/[^a-z0-9 -]/g, "") // remove invalid chars
-            .replace(/\s+/g, "-") // collapse whitespace and replace by -
-            .replace(/-+/g, "-"); // collapse dashes
-
-        return str;
     }
 
     function getSubjectIcon(name: string) {

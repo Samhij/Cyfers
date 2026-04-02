@@ -19,13 +19,14 @@ cur.execute("""
     CREATE TABLE IF NOT EXISTS students (
         id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         username            VARCHAR(255) NOT NULL UNIQUE,
-        password            TEXT NOT NULL,
         tenant_uuid         UUID NOT NULL,
         refresh_token       TEXT,
         access_token_expiry TIMESTAMPTZ,
         created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
+    ALTER TABLE students DROP COLUMN IF EXISTS password;
 
     CREATE OR REPLACE FUNCTION update_updated_at()
     RETURNS TRIGGER AS $$

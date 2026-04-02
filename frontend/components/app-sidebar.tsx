@@ -119,25 +119,25 @@ export default function AppSidebar() {
                                 title: "Home",
                                 url: "/home",
                                 icon: LayoutGrid,
-                                isActive: pathname === "/home",
+                                isActive: pathname.includes("home"),
                             },
                             {
                                 title: "Cijfers",
                                 url: "/cijfers",
                                 icon: Star,
-                                isActive: pathname === "/cijfers",
+                                isActive: pathname.includes("cijfers"),
                             },
                             {
                                 title: "Rooster",
                                 url: "/rooster",
                                 icon: Calendar,
-                                isActive: pathname === "/rooster",
+                                isActive: pathname.includes("rooster"),
                             },
                             {
                                 title: "Verzuim",
                                 url: "/verzuim",
                                 icon: CalendarX,
-                                isActive: pathname === "/verzuim",
+                                isActive: pathname.includes("verzuim"),
                             },
                         ].map((item) => (
                             <SidebarMenuItem key={item.title}>
