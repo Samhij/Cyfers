@@ -4,10 +4,8 @@ from datetime import datetime, timedelta, timezone
 from contextlib import contextmanager
 
 import somtoday
-import psycopg2
 from psycopg2 import pool
 from dotenv import load_dotenv
-from cryptography.fernet import Fernet
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 
@@ -20,15 +18,10 @@ logging.basicConfig(
 load_dotenv()
 
 # Environment Validation
-REQUIRED_ENV_VARS = ["DB_HOST", "DB_NAME", "DB_USER", "DB_PASSWORD", "ENCRYPTION_KEY"]
+REQUIRED_ENV_VARS = ["DB_HOST", "DB_NAME", "DB_USER", "DB_PASSWORD"]
 missing_vars = [var for var in REQUIRED_ENV_VARS if not os.getenv(var)]
 if missing_vars:
     raise RuntimeError(f"Missing required environment variables: {', '.join(missing_vars)}")
-
-try:
-    cipher_suite = Fernet(os.getenv("ENCRYPTION_KEY").encode())
-except Exception as e:
-    raise RuntimeError(f"Invalid ENCRYPTION_KEY: {e}")
 
 # Database Connection Pool
 try:
@@ -181,14 +174,9 @@ def get_tokens_uname_pword():
                     (s["refresh_token"], expires_at, username)
                 )
             else:
-                if username.lower() == "ll526100":
-                    encrypted_password = password
-                else:
-                    encrypted_password = cipher_suite.encrypt(password.encode()).decode()
-                
                 cur.execute(
-                    "INSERT INTO students (username, password, tenant_uuid, refresh_token, access_token_expiry) VALUES (%s, %s, %s, %s, %s)",
-                    (username, encrypted_password, tenant_uuid, s["refresh_token"], expires_at)
+                    "INSERT INTO students (username, tenant_uuid, refresh_token, access_token_expiry) VALUES (%s, %s, %s, %s)",
+                    (username.upper(), tenant_uuid, s["refresh_token"], expires_at)
                 )
         
         response = make_response(jsonify({"message": "success"}))
