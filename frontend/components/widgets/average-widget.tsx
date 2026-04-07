@@ -2,14 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
+import { formatGrade } from "@/lib/format-grade";
 
 export default function AverageWidget() {
     const [loading, setLoading] = useState<boolean>(true);
     const [average, setAverage] = useState<number | null>(null);
-
-    function formatAverage(average: number) {
-        return (Math.round(average * 10) / 10).toFixed(1);
-    }
 
     async function getAverage() {
         setLoading(true);
@@ -51,7 +48,7 @@ export default function AverageWidget() {
                 Totaalgemiddelde
             </span>
             <span className="text-primary text-2xl font-black leading-8">
-                {formatAverage(average ?? 0)}
+                {formatGrade(average ?? 0)}
             </span>
         </div>
     );

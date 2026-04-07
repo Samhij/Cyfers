@@ -6,6 +6,7 @@ import { Calculator, Target } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { formatGrade } from "@/lib/format-grade";
 
 function parseDecimal(value: string) {
     const normalized = value.replace(",", ".").trim();
@@ -16,14 +17,6 @@ function parseDecimal(value: string) {
 
     const parsed = Number(normalized);
     return Number.isFinite(parsed) ? parsed : Number.NaN;
-}
-
-function formatNumber(value: number) {
-    const rounded = Math.round(value * 100) / 100;
-    return rounded
-        .toFixed(2)
-        .replace(/\.0+$/, "")
-        .replace(/(\.[1-9]*)0+$/, "$1");
 }
 
 function calculateNewAverage(
@@ -122,7 +115,7 @@ export default function GradeCalculators({
                             Wat gebeurt er met je gemiddelde?
                         </CardTitle>
                         <p className="text-sm leading-6 text-muted-foreground">
-                            Huidig gemiddelde: {formatNumber(currentAverage)}{" "}
+                            Huidig gemiddelde: {formatGrade(currentAverage)}{" "}
                             uit {currentWeight} cijfers.
                         </p>
                     </CardHeader>
@@ -175,7 +168,7 @@ export default function GradeCalculators({
                             </p>
                             <p className="mt-1 text-4xl font-black text-primary">
                                 {newAverage !== null
-                                    ? formatNumber(newAverage)
+                                    ? formatGrade(newAverage)
                                     : "—"}
                             </p>
                             <p className="mt-1 text-sm leading-6 text-muted-foreground">
@@ -246,7 +239,7 @@ export default function GradeCalculators({
                             </p>
                             <p className="mt-1 text-4xl font-black text-primary">
                                 {requiredGrade !== null
-                                    ? formatNumber(requiredGrade)
+                                    ? formatGrade(requiredGrade)
                                     : "—"}
                             </p>
                             <p className="mt-1 text-sm leading-6 text-muted-foreground">
@@ -254,7 +247,7 @@ export default function GradeCalculators({
                                     ? requiredGradeOutOfRange
                                         ? "Dit cijfer valt buiten de gebruikelijke schaal van 1 tot 10."
                                         : requiredGrade !== null
-                                          ? `Je hebt met dit gewicht een cijfer van ${formatNumber(requiredGrade)} nodig.`
+                                        ? `Je hebt met dit gewicht een cijfer van ${formatGrade(requiredGrade)} nodig.`
                                           : "Vul een gewenst gemiddelde en gewicht in om te zien welk cijfer je nodig hebt."
                                     : "Vul een gewenst gemiddelde en gewicht in om te zien welk cijfer je nodig hebt."}
                             </p>

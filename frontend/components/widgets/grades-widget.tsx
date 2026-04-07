@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Progress } from "../ui/progress";
 import { Skeleton } from "../ui/skeleton";
+import { formatGrade } from "@/lib/format-grade";
 
 interface Grade {
     date: string;
@@ -61,7 +62,7 @@ function GradeCard({
                     <span
                         className={`${gradeColorClass} text-4xl font-extrabold`}
                     >
-                        {item.grade}
+                        {formatGrade(item.grade)}
                     </span>
                     <span className="text-xs font-bold uppercase bg-[#33323D] px-3 py-2 rounded-full">
                         {item.subject}

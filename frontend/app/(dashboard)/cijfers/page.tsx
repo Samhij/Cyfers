@@ -21,7 +21,7 @@ export default function Cijfers() {
                     <SubjectsWidget />
                 </div>
                 <div className="w-full space-y-6">
-                    <GradesWidget amount={5} columns={1} />
+                    <GradesWidget amount={12} columns={2} compact />
                 </div>
             </div>
         </div>

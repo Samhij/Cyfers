@@ -17,6 +17,7 @@ import {
     Utensils,
 } from "lucide-react";
 import { slugify } from "@/lib/slugify";
+import { formatGrade } from "@/lib/format-grade";
 
 interface Subject {
     grades: number[];
@@ -24,6 +25,11 @@ interface Subject {
 }
 
 type Subjects = Record<string, Subject>;
+
+interface SubjectsWidgetProps {
+    columns?: number;
+    rows?: number;
+}
 
 const subjectIconMap: Array<{ keywords: string[]; icon: LucideIcon }> = [
     { keywords: ["informatica", "computer", "ict"], icon: Monitor },
@@ -40,13 +46,17 @@ const subjectIconMap: Array<{ keywords: string[]; icon: LucideIcon }> = [
     { keywords: ["biologie", "biology"], icon: Utensils },
 ];
 
-export default function SubjectsWidget() {
+export default function SubjectsWidget({
+    columns = 1,
+    rows,
+}: SubjectsWidgetProps) {
     const [loading, setLoading] = useState<boolean>(true);
     const [subjects, setSubjects] = useState<Subjects | null>(null);
 
-    function formatAverage(average: number) {
-        return (Math.round(average * 10) / 10).toFixed(1);
-    }
+    const gridStyle = {
+        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+        ...(rows ? { gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))` } : {}),
+    };
 
     function getSubjectIcon(name: string) {
         const normalizedName = name.toLowerCase();
@@ -82,7 +92,7 @@ export default function SubjectsWidget() {
                         Alle vakken
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="mt-2 space-y-2">
+                <CardContent className="mt-2 grid gap-2" style={gridStyle}>
                     {[...Array(10)].map((_, i) => (
                         <div
                             key={i}
@@ -104,24 +114,24 @@ export default function SubjectsWidget() {
                 </CardTitle>
             </CardHeader>
             <CardContent className="mt-2">
-                <ul className="space-y-2">
+                <ul className="grid gap-2" style={gridStyle}>
                     {Object.entries(subjects ?? {}).map(([name, subject]) => {
                         const Icon = getSubjectIcon(name);
 
                         return (
-                            <li key={name}>
+                            <li key={name} className="min-w-0">
                                 <Link
                                     href={`/cijfers/${slugify(name)}`}
-                                    className="bg-[#262528] hover:bg-[#323135] transition-all duration-100 p-4 rounded-lg flex items-center justify-between"
+                                    className="flex h-full items-center justify-between rounded-lg bg-[#262528] p-4 transition-all duration-100 hover:bg-[#323135]"
                                 >
-                                    <span className="text-xl font-semibold flex items-center gap-4">
-                                        <div className="bg-primary p-2 rounded-lg">
+                                    <div className="flex min-w-0 items-center gap-4 text-xl font-semibold">
+                                        <div className="rounded-lg bg-primary p-2">
                                             <Icon className="size-6 text-black" />
                                         </div>
-                                        {name}
-                                    </span>
+                                        <span className="truncate">{name}</span>
+                                    </div>
                                     <span className="text-2xl font-bold text-primary">
-                                        {formatAverage(subject.average)}
+                                        {formatGrade(subject.average)}
                                     </span>
                                 </Link>
                             </li>

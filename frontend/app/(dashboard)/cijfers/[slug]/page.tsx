@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import GradeCalculators from "@/components/widgets/grade-calculators-widget";
 import { getBackendUrl } from "@/lib/backend-url";
+import { formatGrade } from "@/lib/format-grade";
 import { slugify } from "@/lib/slugify";
 
 interface Grade {
@@ -21,10 +22,6 @@ interface Grade {
     subject: string;
     grade: number;
     period: string | number;
-}
-
-function formatGrade(grade: number) {
-    return (Math.round(grade * 10) / 10).toFixed(1);
 }
 
 function formatDate(date: string) {
