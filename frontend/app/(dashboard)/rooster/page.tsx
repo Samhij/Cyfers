@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ScheduleGrid, { WeekSchedule } from "@/components/schedule-grid";
@@ -42,6 +42,8 @@ export default function Rooster() {
 
     const [week, setWeek] = useState(currentWeek);
     const [year, setYear] = useState(currentYear);
+    const [direction, setDirection] = useState<"forward" | "backward">("forward");
+    const hasNavigated = useRef(false);
     const [schedule, setSchedule] = useState<WeekSchedule>({});
     const [loading, setLoading] = useState(true);
 
@@ -85,6 +87,8 @@ export default function Rooster() {
     }, []);
 
     function prevWeek() {
+        setDirection("backward");
+        hasNavigated.current = true;
         setWeek((w) => {
             if (w - 1 < 1) {
                 setYear((y) => y - 1);
@@ -95,6 +99,8 @@ export default function Rooster() {
     }
 
     function nextWeek() {
+        setDirection("forward");
+        hasNavigated.current = true;
         setWeek((w) => {
             if (w + 1 > 52) {
                 setYear((y) => y + 1);
@@ -111,7 +117,10 @@ export default function Rooster() {
                 {/* Left: title + week info */}
                 <div>
                     <h1 className="text-3xl font-black leading-none">Wekelijks Rooster</h1>
-                    <div className="flex items-center gap-3 mt-2">
+                    <div
+                        key={`${week}-${year}`}
+                        className={`flex items-center gap-3 mt-2 ${hasNavigated.current ? "animate-in fade-in-0 duration-300" : ""}`}
+                    >
                         <span className="text-xs font-bold bg-white/10 text-foreground px-2.5 py-1 rounded-md">
                             Week {week}
                         </span>
@@ -142,7 +151,12 @@ export default function Rooster() {
 
             {/* ── Grid ── */}
             <div className="flex-1 overflow-hidden">
-                <ScheduleGrid schedule={schedule} loading={loading} />
+                <div
+                    key={`${week}-${year}`}
+                    className={`h-full${hasNavigated.current ? ` animate-in fade-in-0 duration-300 ${direction === "forward" ? "slide-in-from-right-6" : "slide-in-from-left-6"}` : ""}`}
+                >
+                    <ScheduleGrid schedule={schedule} loading={loading} />
+                </div>
             </div>
         </div>
     );
